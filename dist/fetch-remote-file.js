@@ -5,6 +5,7 @@ var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefau
 exports.__esModule = true;
 exports.fetchRemoteFile = fetchRemoteFile;
 
+var ProxyAgent = _interopRequireDefault(require("proxy-agent"));
 var _got = _interopRequireDefault(require("got"));
 
 var _fileType = _interopRequireDefault(require("file-type"));
@@ -143,7 +144,12 @@ async function fetchRemoteFile({
   // extensible. We should define a proper API that we validate.
 
 
-  const httpOpts = {};
+  const httpOpts = {
+    agent: {
+      http: new ProxyAgent.default(process.env.http_proxy),
+      https: new ProxyAgent.default(process.env.https_proxy)
+    }
+  };
 
   if (auth && (auth.htaccess_pass || auth.htaccess_user)) {
     httpOpts.auth = `${auth.htaccess_user}:${auth.htaccess_pass}`;
